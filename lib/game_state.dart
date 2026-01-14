@@ -35,7 +35,7 @@ class GameState {
 
     board[index] = isXTurn ? 'X' : 'O';
     isXTurn = !isXTurn;
-    _checkWinner();
+    checkWinner();
     return true;
   }
 
@@ -51,8 +51,8 @@ class GameState {
     return true;
   }
 
-  /// Check for a winner or draw
-  void _checkWinner() {
+  /// Check for a winner or draw (public for AI simulation)
+  void checkWinner() {
     // Check rows
     for (int i = 0; i < boardSize; i++) {
       if (_checkLine(_getRow(i))) return;

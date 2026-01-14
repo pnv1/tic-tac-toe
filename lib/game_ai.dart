@@ -92,7 +92,7 @@ class GameAI {
           game.board[i] = aiSymbol;
           final currentGameOver = game.gameOver;
           final currentWinner = game.winner;
-          game._checkWinner();
+          game.checkWinner();
           
           int score = _minimax(game, depth + 1, false, opponentSymbol, alpha, beta);
           
@@ -114,7 +114,7 @@ class GameAI {
           game.board[i] = opponentSymbol;
           final currentGameOver = game.gameOver;
           final currentWinner = game.winner;
-          game._checkWinner();
+          game.checkWinner();
           
           int score = _minimax(game, depth + 1, true, opponentSymbol, alpha, beta);
           
@@ -167,7 +167,7 @@ class GameAI {
         game.board[i] = symbol;
         final currentGameOver = game.gameOver;
         final currentWinner = game.winner;
-        game._checkWinner();
+        game.checkWinner();
         
         final isWin = game.gameOver && game.winner == symbol;
         

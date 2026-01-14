@@ -270,7 +270,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: _showSettingsDialog,
-            tooltip: 'New Game',
+            tooltip: 'Settings',
           ),
         ],
       ),
