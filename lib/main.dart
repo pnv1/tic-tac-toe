@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'game_state.dart';
 import 'game_ai.dart';
+import 'animated_board_cell.dart';
 
 void main() {
   runApp(const TicTacToeApp());
@@ -29,45 +30,32 @@ class TicTacToeGame extends StatefulWidget {
   State<TicTacToeGame> createState() => _TicTacToeGameState();
 }
 
-class _TicTacToeGameState extends State<TicTacToeGame> with SingleTickerProviderStateMixin {
+class _TicTacToeGameState extends State<TicTacToeGame> {
   late GameState _gameState;
   late GameAI _gameAI;
   int _boardSize = 3;
   String _gameMode = 'pvp'; // 'pvp' or 'pvc'
   String _difficulty = 'medium';
   bool _showSettings = true;
-  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
     _gameState = GameState(boardSize: _boardSize);
     _gameAI = GameAI(aiSymbol: 'O');
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 
   void _handleTap(int index) async {
     if (!_gameState.makeMove(index)) return;
 
-    _animationController.forward(from: 0);
     setState(() {});
 
     // AI move if in PvC mode and game not over
     if (_gameMode == 'pvc' && !_gameState.gameOver && _gameState.currentPlayer == 'O') {
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 600));
       final aiMove = _gameAI.getBestMove(_gameState, _difficulty);
       if (aiMove != -1) {
         _gameState.makeMove(aiMove);
-        _animationController.forward(from: 0);
         setState(() {});
       }
     }
@@ -338,35 +326,12 @@ class _TicTacToeGameState extends State<TicTacToeGame> with SingleTickerProvider
                   ),
                   itemCount: _boardSize * _boardSize,
                   itemBuilder: (context, index) {
-                    final isWinningCell = _gameState.isWinningCell(index);
-                    return GestureDetector(
+                    return AnimatedBoardCell(
+                      symbol: _gameState.board[index],
+                      isWinningCell: _gameState.isWinningCell(index),
+                      gameOver: _gameState.gameOver,
                       onTap: () => _handleTap(index),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        decoration: BoxDecoration(
-                          color: isWinningCell
-                              ? Colors.green[300]
-                              : (_gameState.gameOver ? Colors.grey[300] : Colors.blue[100]),
-                          border: Border.all(
-                            color: isWinningCell ? Colors.green[700]! : Colors.blue,
-                            width: isWinningCell ? 3 : 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 200),
-                            style: TextStyle(
-                              fontSize: _boardSize == 3 ? 48 : 24,
-                              fontWeight: FontWeight.bold,
-                              color: _gameState.board[index] == 'X'
-                                  ? Colors.blue[900]
-                                  : Colors.red[900],
-                            ),
-                            child: Text(_gameState.board[index]),
-                          ),
-                        ),
-                      ),
+                      fontSize: _boardSize == 3 ? 48 : 24,
                     );
                   },
                 ),
